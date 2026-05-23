@@ -75,6 +75,11 @@ const PressRequest = () => {
       toast.error(parsed.error.issues[0]?.message ?? "Please check the form.");
       return;
     }
+    if (!supabase) {
+      toast.error("Supabase is not configured. Please add the Vite Supabase environment variables.");
+      return;
+    }
+
     setSubmitting(true);
     const v = parsed.data;
     const { error } = await supabase.from("feature_requests").insert({

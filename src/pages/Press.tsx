@@ -11,7 +11,7 @@ import ShareCard from "@/components/ShareCard";
 
 import logo from "@/assets/press-logo.png";
 import hero from "@/assets/hero-couple.jpg";
-import gallery1 from "@/assets/gallery-1.jpg";
+import gallery1 from "@/assets/couple-walking.png";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
 import gallery4 from "@/assets/gallery-4.jpg";
@@ -22,7 +22,7 @@ const SITE_URL = "https://ethereal-events.lovable.app";
 
 const photos = [
   { src: hero, name: "hero-couple.jpg", label: "Hero portrait" },
-  { src: gallery1, name: "gallery-1.jpg", label: "Engagement still" },
+  { src: gallery1, name: "couple-walking.png", label: "Engagement still" },
   { src: gallery2, name: "gallery-2.jpg", label: "Sangeet evening" },
   { src: gallery3, name: "gallery-3.jpg", label: "Ceremony detail" },
   { src: gallery4, name: "gallery-4.jpg", label: "Reception glow" },

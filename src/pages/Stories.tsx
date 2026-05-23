@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ExternalLink, Star, Quote } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import ShareCard from "@/components/ShareCard";
 
@@ -29,6 +29,11 @@ const Stories = () => {
 
   useEffect(() => {
     (async () => {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+
       const { data } = await supabase
         .from("couple_stories")
         .select("*")
@@ -125,6 +130,18 @@ const Stories = () => {
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2">
+            {!isSupabaseConfigured && (
+              <div className="rounded-3xl border border-primary/20 bg-card/60 p-8 text-center text-muted-foreground md:col-span-2">
+                Couple stories are unavailable because Supabase is not configured.
+              </div>
+            )}
+
+            {isSupabaseConfigured && stories.length === 0 && (
+              <div className="rounded-3xl border border-primary/20 bg-card/60 p-8 text-center text-muted-foreground md:col-span-2">
+                No couple stories are published yet.
+              </div>
+            )}
+
             {stories.map((s, i) => (
               <motion.article
                 key={s.id}

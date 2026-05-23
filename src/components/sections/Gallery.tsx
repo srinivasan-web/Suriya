@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState, useRef, MouseEvent } from "react";
 import OrnamentalDivider from "../OrnamentalDivider";
-import g1 from "@/assets/gallery-1.jpg";
+import g1 from "@/assets/couple-walking.png";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
 import g4 from "@/assets/gallery-4.jpg";
