@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { CalendarHeart, Heart, Sparkles } from "lucide-react";
-import galleryOne from "@/assets/gallery-1.jpg";
+import galleryOne from "@/assets/gallery-4.jpg";
 import galleryThree from "@/assets/gallery-3.jpg";
 
 const filmScenes = [
