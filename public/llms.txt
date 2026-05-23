@@ -1,0 +1,7 @@
+# Aarav & Priya — Wedding Invitation
+
+> A cinematic wedding invitation site for Aarav & Priya, celebrating their engagement (12 February 2026) and marriage (17 June 2026) with event details, love story, gallery, venue, and RSVP.
+
+## Pages
+
+- [Home](/): Hero, love story, event timeline, venue, gallery, and RSVP form for the wedding of Aarav & Priya.

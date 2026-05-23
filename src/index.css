@@ -1,0 +1,483 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dreamy Pastel Wedding Design System
+   Blush, champagne, sage, ivory. All HSL.
+*/
+
+@layer base {
+  :root {
+    /* Base canvas */
+    --background: 30 40% 98%;          /* warm ivory */
+    --foreground: 340 20% 22%;         /* soft burgundy ink */
+
+    --card: 30 50% 99%;
+    --card-foreground: 340 20% 22%;
+
+    --popover: 30 50% 99%;
+    --popover-foreground: 340 20% 22%;
+
+    /* Brand palette */
+    --primary: 340 55% 70%;            /* blush pink */
+    --primary-foreground: 30 40% 98%;
+    --primary-glow: 340 80% 85%;
+
+    --secondary: 35 60% 88%;           /* champagne */
+    --secondary-foreground: 340 20% 22%;
+
+    --muted: 30 30% 94%;
+    --muted-foreground: 340 10% 45%;
+
+    --accent: 95 20% 78%;              /* soft sage */
+    --accent-foreground: 340 20% 22%;
+
+    --gold: 38 60% 70%;                /* champagne gold */
+    --gold-soft: 38 70% 88%;
+    --rose: 350 65% 78%;
+    --sage: 95 25% 70%;
+    --ivory: 35 50% 96%;
+
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 30 40% 98%;
+
+    --border: 35 30% 86%;
+    --input: 35 30% 90%;
+    --ring: 340 55% 70%;
+
+    --radius: 1rem;
+
+    /* Gradients */
+    --gradient-dreamy: linear-gradient(135deg, hsl(340 70% 92%) 0%, hsl(35 70% 94%) 50%, hsl(95 30% 92%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(35 80% 92%) 0%, hsl(340 70% 88%) 100%);
+    --gradient-petal: linear-gradient(135deg, hsl(340 80% 90%) 0%, hsl(350 70% 85%) 100%);
+    --gradient-veil: linear-gradient(180deg, hsl(30 40% 98% / 0) 0%, hsl(30 40% 98% / 0.7) 50%, hsl(30 40% 98% / 1) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(38 70% 80%) 0%, hsl(35 60% 70%) 50%, hsl(38 70% 80%) 100%);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(340 70% 92%) 0%, hsl(35 60% 96%) 60%, hsl(30 40% 98%) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 10px 40px -10px hsl(340 50% 70% / 0.25);
+    --shadow-bloom: 0 20px 60px -15px hsl(340 60% 65% / 0.35);
+    --shadow-gold: 0 10px 30px -10px hsl(38 60% 60% / 0.4);
+    --shadow-card: 0 4px 30px hsl(340 30% 50% / 0.08);
+
+    /* Motion */
+    --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 30 40% 98%;
+    --sidebar-foreground: 340 20% 22%;
+    --sidebar-primary: 340 55% 70%;
+    --sidebar-primary-foreground: 30 40% 98%;
+    --sidebar-accent: 35 60% 92%;
+    --sidebar-accent-foreground: 340 20% 22%;
+    --sidebar-border: 35 30% 86%;
+    --sidebar-ring: 340 55% 70%;
+  }
+
+  .dark {
+    --background: 340 20% 8%;
+    --foreground: 30 40% 96%;
+    --card: 340 20% 10%;
+    --card-foreground: 30 40% 96%;
+    --popover: 340 20% 10%;
+    --popover-foreground: 30 40% 96%;
+    --primary: 340 60% 75%;
+    --primary-foreground: 340 20% 8%;
+    --secondary: 340 15% 18%;
+    --secondary-foreground: 30 40% 96%;
+    --muted: 340 15% 16%;
+    --muted-foreground: 30 20% 70%;
+    --accent: 95 25% 30%;
+    --accent-foreground: 30 40% 96%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 30 40% 96%;
+    --border: 340 15% 20%;
+    --input: 340 15% 20%;
+    --ring: 340 60% 75%;
+
+    --gradient-dreamy: linear-gradient(135deg, hsl(340 30% 14%) 0%, hsl(35 25% 12%) 50%, hsl(38 40% 18%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(35 30% 14%) 0%, hsl(340 30% 12%) 100%);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(340 30% 16%) 0%, hsl(35 20% 10%) 60%, hsl(340 20% 8%) 100%);
+    --gradient-veil: linear-gradient(180deg, hsl(340 20% 8% / 0) 0%, hsl(340 20% 8% / 0.7) 50%, hsl(340 20% 8% / 1) 100%);
+  }
+
+  /* === Theme: Midnight Gold (dark cinematic) === */
+  [data-theme="midnight"] {
+    --background: 230 30% 8%;
+    --foreground: 38 60% 92%;
+    --card: 230 28% 11%;
+    --card-foreground: 38 60% 92%;
+    --popover: 230 28% 11%;
+    --popover-foreground: 38 60% 92%;
+    --primary: 38 75% 68%;
+    --primary-foreground: 230 30% 8%;
+    --primary-glow: 42 90% 78%;
+    --secondary: 230 25% 16%;
+    --secondary-foreground: 38 60% 92%;
+    --muted: 230 20% 14%;
+    --muted-foreground: 38 25% 70%;
+    --accent: 38 60% 55%;
+    --accent-foreground: 230 30% 8%;
+    --gold: 42 85% 68%;
+    --gold-soft: 42 70% 50%;
+    --rose: 350 55% 65%;
+    --sage: 95 25% 55%;
+    --ivory: 38 50% 90%;
+    --border: 230 25% 20%;
+    --input: 230 25% 18%;
+    --ring: 38 75% 68%;
+
+    --gradient-dreamy: linear-gradient(135deg, hsl(230 35% 10%) 0%, hsl(280 25% 12%) 50%, hsl(38 30% 14%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(38 30% 14%) 0%, hsl(230 35% 8%) 100%);
+    --gradient-petal: linear-gradient(135deg, hsl(38 60% 30%) 0%, hsl(42 70% 40%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(42 85% 70%) 0%, hsl(38 75% 55%) 50%, hsl(42 90% 75%) 100%);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(38 40% 18%) 0%, hsl(280 25% 10%) 55%, hsl(230 35% 6%) 100%);
+    --gradient-veil: linear-gradient(180deg, hsl(230 30% 8% / 0) 0%, hsl(230 30% 8% / 0.75) 55%, hsl(230 30% 8% / 1) 100%);
+    --shadow-soft: 0 10px 40px -10px hsl(42 85% 55% / 0.35);
+    --shadow-bloom: 0 20px 60px -15px hsl(42 90% 60% / 0.4);
+    --shadow-gold: 0 10px 30px -10px hsl(42 90% 55% / 0.55);
+    --shadow-card: 0 4px 30px hsl(230 50% 4% / 0.5);
+  }
+
+  /* === Theme: Rose Dusk === */
+  [data-theme="rose"] {
+    --background: 345 60% 96%;
+    --foreground: 340 30% 22%;
+    --card: 350 70% 98%;
+    --card-foreground: 340 30% 22%;
+    --popover: 350 70% 98%;
+    --popover-foreground: 340 30% 22%;
+    --primary: 345 75% 62%;
+    --primary-foreground: 350 70% 98%;
+    --primary-glow: 350 85% 78%;
+    --secondary: 350 60% 90%;
+    --secondary-foreground: 340 30% 22%;
+    --muted: 345 40% 93%;
+    --muted-foreground: 340 15% 45%;
+    --accent: 20 75% 75%;
+    --accent-foreground: 340 30% 22%;
+    --gold: 28 75% 65%;
+    --gold-soft: 28 80% 85%;
+    --rose: 345 80% 70%;
+    --sage: 350 30% 80%;
+    --ivory: 350 60% 96%;
+    --border: 345 40% 86%;
+    --input: 345 40% 90%;
+    --ring: 345 75% 62%;
+    --gradient-dreamy: linear-gradient(135deg, hsl(345 80% 92%) 0%, hsl(20 70% 92%) 50%, hsl(340 70% 90%) 100%);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(345 80% 92%) 0%, hsl(20 70% 95%) 60%, hsl(345 60% 96%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(345 80% 75%) 0%, hsl(28 75% 65%) 50%, hsl(345 80% 75%) 100%);
+  }
+
+  /* === Theme: Emerald Royal === */
+  [data-theme="emerald"] {
+    --background: 150 25% 96%;
+    --foreground: 160 40% 14%;
+    --card: 150 35% 98%;
+    --card-foreground: 160 40% 14%;
+    --popover: 150 35% 98%;
+    --popover-foreground: 160 40% 14%;
+    --primary: 160 55% 38%;
+    --primary-foreground: 150 35% 98%;
+    --primary-glow: 155 60% 60%;
+    --secondary: 150 30% 88%;
+    --secondary-foreground: 160 40% 14%;
+    --muted: 150 20% 92%;
+    --muted-foreground: 160 15% 38%;
+    --accent: 42 75% 60%;
+    --accent-foreground: 160 40% 14%;
+    --gold: 42 80% 58%;
+    --gold-soft: 42 85% 80%;
+    --rose: 350 50% 75%;
+    --sage: 150 35% 60%;
+    --ivory: 150 30% 95%;
+    --border: 150 25% 84%;
+    --input: 150 25% 88%;
+    --ring: 160 55% 38%;
+    --gradient-dreamy: linear-gradient(135deg, hsl(150 50% 90%) 0%, hsl(42 70% 92%) 50%, hsl(160 40% 88%) 100%);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(150 50% 92%) 0%, hsl(42 60% 94%) 60%, hsl(150 25% 96%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(42 85% 72%) 0%, hsl(42 80% 55%) 50%, hsl(42 85% 72%) 100%);
+  }
+
+  /* === Theme: Sapphire Night (dark) === */
+  [data-theme="sapphire"] {
+    --background: 220 45% 8%;
+    --foreground: 210 40% 94%;
+    --card: 220 40% 11%;
+    --card-foreground: 210 40% 94%;
+    --popover: 220 40% 11%;
+    --popover-foreground: 210 40% 94%;
+    --primary: 210 90% 70%;
+    --primary-foreground: 220 45% 8%;
+    --primary-glow: 200 95% 75%;
+    --secondary: 220 35% 16%;
+    --secondary-foreground: 210 40% 94%;
+    --muted: 220 30% 14%;
+    --muted-foreground: 210 20% 70%;
+    --accent: 270 60% 70%;
+    --accent-foreground: 220 45% 8%;
+    --gold: 200 95% 70%;
+    --gold-soft: 210 80% 55%;
+    --rose: 320 60% 70%;
+    --sage: 180 40% 60%;
+    --ivory: 210 40% 92%;
+    --border: 220 35% 20%;
+    --input: 220 35% 18%;
+    --ring: 210 90% 70%;
+    --gradient-dreamy: linear-gradient(135deg, hsl(220 50% 10%) 0%, hsl(270 40% 14%) 50%, hsl(200 50% 14%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(200 50% 14%) 0%, hsl(220 50% 8%) 100%);
+    --gradient-petal: linear-gradient(135deg, hsl(270 60% 35%) 0%, hsl(210 70% 45%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(200 95% 72%) 0%, hsl(210 90% 60%) 50%, hsl(270 70% 75%) 100%);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(210 60% 18%) 0%, hsl(270 40% 10%) 55%, hsl(220 50% 6%) 100%);
+    --gradient-veil: linear-gradient(180deg, hsl(220 45% 8% / 0) 0%, hsl(220 45% 8% / 0.75) 55%, hsl(220 45% 8% / 1) 100%);
+    --shadow-soft: 0 10px 40px -10px hsl(210 90% 60% / 0.4);
+    --shadow-bloom: 0 20px 60px -15px hsl(270 70% 60% / 0.45);
+    --shadow-gold: 0 10px 30px -10px hsl(200 95% 60% / 0.55);
+    --shadow-card: 0 4px 30px hsl(220 60% 4% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    transition: background-color 0.6s var(--ease-cinematic), color 0.6s var(--ease-cinematic);
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .font-script {
+    font-family: 'Dancing Script', cursive;
+  }
+
+  .font-display {
+    font-family: 'Cormorant Garamond', serif;
+  }
+}
+
+@layer components {
+  .text-gold-gradient {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass-card {
+    background: hsl(30 50% 99% / 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(340 50% 90% / 0.5);
+    box-shadow: var(--shadow-card);
+  }
+
+  .ornamental-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .ornamental-divider::before,
+  .ornamental-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--gold)), transparent);
+    max-width: 120px;
+  }
+}
+
+@layer utilities {
+  .animate-petal-fall {
+    animation: petal-fall linear infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 1.2s var(--ease-cinematic) forwards;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 4s ease-in-out infinite;
+  }
+
+  .animate-cinematic-sweep {
+    background-size: 220% 100%;
+    animation: cinematic-sweep 9s ease-in-out infinite;
+  }
+
+  .cinematic-grain {
+    background-image:
+      radial-gradient(circle at 20% 30%, hsl(var(--foreground) / 0.45) 0 1px, transparent 1px),
+      radial-gradient(circle at 70% 60%, hsl(var(--foreground) / 0.25) 0 1px, transparent 1px);
+    background-size: 42px 42px, 58px 58px;
+  }
+
+  .ending-video-scene {
+    animation: ending-scene-loop 24s linear infinite;
+    opacity: 0;
+    will-change: opacity, transform, filter;
+  }
+
+  .ending-couple-float {
+    animation: ending-couple-float 8s ease-in-out infinite;
+    will-change: transform, filter;
+  }
+
+  .ending-light-sweep {
+    animation: ending-light-sweep 10s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  .ending-star-drift {
+    animation: ending-star-drift 6s ease-in-out infinite;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(110vh) translateX(var(--drift, 100px)) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-20px) translateX(10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+@keyframes cinematic-sweep {
+  0% { background-position: -160% 0; opacity: 0.32; }
+  45%, 55% { opacity: 0.78; }
+  100% { background-position: 160% 0; }
+}
+
+@keyframes ending-scene-loop {
+  0% {
+    opacity: 0;
+    filter: brightness(0.78) saturate(1.04);
+    transform: scale(1.18) translate3d(-1.5%, 1.5%, 0);
+  }
+  5% {
+    opacity: 1;
+  }
+  27% {
+    opacity: 1;
+    filter: brightness(1.08) saturate(1.24);
+  }
+  39% {
+    opacity: 0;
+    transform: scale(1.04) translate3d(1.5%, -1.5%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.04) translate3d(1.5%, -1.5%, 0);
+  }
+}
+
+@keyframes ending-couple-float {
+  0%, 100% {
+    filter: drop-shadow(0 32px 40px hsl(var(--foreground) / 0.65)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 38px 52px hsl(var(--gold) / 0.35)) brightness(1.12);
+  }
+}
+
+@keyframes ending-light-sweep {
+  0%, 100% {
+    opacity: 0.18;
+    transform: translateX(-18%) skewX(-10deg);
+  }
+  50% {
+    opacity: 0.74;
+    transform: translateX(54%) skewX(-10deg);
+  }
+}
+
+@keyframes ending-star-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.7);
+  }
+  35% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(18px, -82px, 0) scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
