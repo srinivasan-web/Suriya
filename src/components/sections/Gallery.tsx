@@ -65,7 +65,8 @@ const TiltCard = ({
           src={photo.src}
           alt={photo.alt}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
+          style={{ transitionDuration: "1400ms" }}
+          className="h-full w-full object-cover transition-transform ease-out group-hover:scale-110"
         />
         {/* Soft dim on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-foreground/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />

@@ -17,10 +17,10 @@ type EventCard = {
 
 const engagement: EventCard = {
   name: "Engagement",
-  tagline: "where the promise began",
-  date: "Feb 12, 2026",
-  time: "6:00 PM onwards",
-  venue: "The Lotus Garden",
+  tagline: "where the promise begins",
+  date: "23.02.26",
+  time: "10.00 AM to 11.00 AM",
+  venue: "Mannargudi",
   icon: "💍",
   accent: "from-primary/40 via-rose/30 to-gold-soft/30",
 };

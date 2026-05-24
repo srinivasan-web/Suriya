@@ -1,8 +1,6 @@
 import Hero from "@/components/sections/Hero";
-import LoveStory from "@/components/sections/LoveStory";
 import Events from "@/components/sections/Events";
 import Venue from "@/components/sections/Venue";
-import Gallery from "@/components/sections/Gallery";
 import SacredPromises from "@/components/sections/SacredPromises";
 import RSVP from "@/components/sections/RSVP";
 import Ending from "@/components/sections/Ending";
@@ -18,11 +16,12 @@ const Index = () => {
     <main className="relative min-h-screen overflow-x-hidden bg-background">
       <Helmet>
         <link rel="canonical" href="https://ethereal-events.lovable.app/" />
-        <link rel="preconnect" href="https://cdn.pixabay.com" />
+        <link rel="preconnect" href="https://w.soundcloud.com" />
+        <link rel="preconnect" href="https://api.soundcloud.com" />
+        <link rel="preconnect" href="https://i1.sndcdn.com" />
       </Helmet>
       <PetalRain count={26} />
       <Hero />
-    
       <Events />
       <Venue />
       <SacredPromises />

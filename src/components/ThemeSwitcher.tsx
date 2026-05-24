@@ -25,7 +25,7 @@ const STORAGE_KEY = "wedding-theme";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 const applyTheme = (id: ThemeId) => {
-  const theme = THEMES.find((t) => t.id === id) ?? THEMES[0];
+  const theme = THEMES.find((t) => t.id === id) ?? THEMES[3];
   const root = document.documentElement;
   if (id === "ivory") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", id);

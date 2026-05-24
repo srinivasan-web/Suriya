@@ -6,17 +6,10 @@ import OrnamentalDivider from "../OrnamentalDivider";
 const venueDetails = [
   {
     icon: Landmark,
-    label: "Wedding Ceremony",
-    name: "Arulmigu Pazhaniandavar Thirukovil",
-    address: "Pattukkottai",
-    time: "17 June 2026, 10:00 AM",
-  },
-  {
-    icon: MapPin,
-    label: "Reception",
-    name: "Sri Kumaran Thirumana Mahal",
-    address: "Near Taluk Office, Ponnavarayan Kottai",
-    time: "Reception to follow",
+    label: "Engagement",
+    name: "Engagement Ceremony",
+    address: "Mannargudi",
+    time: "23.02.26, 10.00 AM to 11.00 AM",
   },
 ];
 
@@ -37,7 +30,7 @@ const Venue = () => {
           className="mb-12 text-center sm:mb-16"
         >
           <p className="font-script text-2xl text-primary sm:text-3xl">join us here</p>
-          <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-7xl">Wedding Venues</h2>
+          <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-7xl">Engagement Venue</h2>
           <OrnamentalDivider className="mt-6 sm:mt-8" />
         </motion.div>
 
@@ -144,7 +137,7 @@ const Venue = () => {
                 <MapPin className="relative h-9 w-9" fill="currentColor" />
               </div>
               <p className="mt-3 rounded-full bg-background/85 px-3 py-1 text-xs uppercase tracking-[0.18em] text-foreground shadow-soft backdrop-blur">
-              Pattukkottai
+              Mannargudi
               </p>
             </motion.div>
 
@@ -177,9 +170,9 @@ const Venue = () => {
             transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-6 sm:space-y-7"
           >
-            <h3 className="font-display text-3xl sm:text-4xl md:text-5xl">Ceremony & Reception</h3>
+            <h3 className="font-display text-3xl sm:text-4xl md:text-5xl">Engagement Ceremony</h3>
             <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-              We would be honored by your presence as the wedding rituals begin at the temple, followed by the reception celebration at Kumaran Hall.
+              We would be honored by your presence as Suriya Kumar and Kaviya begin this beautiful promise with family, blessings, and love.
             </p>
 
             <div className="space-y-4">
@@ -217,7 +210,7 @@ const Venue = () => {
             </div>
 
             <a
-              href="https://www.google.com/maps/search/Sri+Kumaran+Thirumana+Mahal+Ponnavarayan+Kottai"
+              href="https://www.google.com/maps/search/?api=1&query=Mannargudi"
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-3 rounded-full bg-gradient-gold px-6 py-3.5 font-display text-base text-foreground shadow-gold transition-transform duration-500 hover:scale-105 sm:px-8 sm:py-4 sm:text-lg"

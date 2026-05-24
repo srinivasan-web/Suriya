@@ -1,10 +1,12 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarHeart, Heart, MapPin, Sparkles } from "lucide-react";
+import { CalendarHeart, Heart, Sparkles } from "lucide-react";
 import heroImage from "@/assets/hero-couple.jpg";
 import OrnamentalDivider from "../OrnamentalDivider";
 import Countdown from "../Countdown";
 
-const WEDDING_DATE = new Date("2026-06-17T00:00:00");
+const EVENT_START = new Date("2026-06-17T10:00:00");
+const EVENT_END = new Date("2026-06-17T11:00:00");
 
 const floatingHearts = Array.from({ length: 22 }, (_, i) => ({
   id: i,
@@ -17,9 +19,8 @@ const floatingHearts = Array.from({ length: 22 }, (_, i) => ({
 }));
 
 const quickDetails = [
-  { icon: CalendarHeart, label: "17 June 2026" },
-  { icon: MapPin, label: "Pattukkottai & Ponnavarayan Kottai" },
-  { icon: Sparkles, label: "Wedding & Reception" },
+  { icon: CalendarHeart, label: "17.06.26" },
+  { icon: Sparkles, label: "Marriage" },
 ];
 
 const loveNotes = [
@@ -29,6 +30,15 @@ const loveNotes = [
 ];
 
 const Hero = () => {
+  const [now, setNow] = useState(() => Date.now());
+  const isBeforeEvent = now < EVENT_START.getTime();
+  const isDuringEvent = now >= EVENT_START.getTime() && now <= EVENT_END.getTime();
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
   return (
     <section className="relative min-h-[100svh] w-full overflow-hidden">
       <div className="absolute inset-0">
@@ -39,9 +49,10 @@ const Hero = () => {
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_22%,hsl(var(--primary-glow)/0.16),transparent_36%),linear-gradient(180deg,hsl(var(--foreground)/0.14),transparent_34%,hsl(var(--background)/0.94))]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/70 md:from-background/55 md:to-background/45" />
-        <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_0%,hsl(var(--gold)/0.16)_46%,transparent_58%)] animate-cinematic-sweep" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_26%,hsl(var(--foreground)/0.48),hsl(var(--foreground)/0.2)_28%,transparent_54%),linear-gradient(180deg,hsl(var(--foreground)/0.62),hsl(var(--foreground)/0.24)_34%,hsl(var(--background)/0.96))]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/28 to-background/78 md:from-background/58 md:via-background/18 md:to-background/48" />
+        <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_0%,hsl(var(--gold)/0.08)_46%,transparent_58%)] animate-cinematic-sweep" />
+        <div className="absolute inset-x-[8%] top-[14%] h-[54%] rounded-full bg-foreground/28 blur-[70px] md:inset-x-[24%]" />
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
@@ -89,7 +100,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-          className="font-script text-xl text-primary drop-shadow-sm sm:text-2xl md:text-3xl"
+          className="font-script text-xl font-semibold text-gold drop-shadow-[0_3px_18px_hsl(var(--foreground)/0.7)] sm:text-2xl md:text-3xl"
         >
           together forever
         </motion.p>
@@ -98,10 +109,13 @@ const Hero = () => {
           initial={{ opacity: 0, y: 50, filter: "blur(15px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.6 }}
-          className="mt-3 max-w-[11ch] font-display text-[3.25rem] leading-[0.9] text-foreground drop-shadow-[0_8px_26px_hsl(var(--background)/0.5)] sm:mt-4 sm:text-7xl md:max-w-none md:text-8xl lg:text-[10rem]"
+          className="hero-couple-name mt-3 max-w-[12ch] text-[3.35rem] font-semibold leading-[0.88] text-ivory drop-shadow-[0_10px_32px_hsl(var(--foreground)/0.9)] sm:mt-4 sm:text-7xl md:max-w-none md:text-8xl lg:text-[10rem]"
         >
-          Suriya Kumar<span className="font-script text-gold-gradient italic">,<br/>
-          &</span> <br/>Kaviya
+          Suriya Kumar
+          <span className="hero-ampersand block py-1 text-[0.75em] leading-none text-gold drop-shadow-[0_0_26px_hsl(var(--gold)/0.8)]">
+            &
+          </span>
+          Kaviya
         </motion.h1>
 
         <motion.div
@@ -117,11 +131,11 @@ const Hero = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 max-w-2xl font-display text-base italic text-muted-foreground sm:mt-8 sm:text-xl md:text-2xl"
+          className="mt-6 max-w-2xl font-display text-base font-medium italic text-ivory/90 drop-shadow-[0_4px_18px_hsl(var(--foreground)/0.75)] sm:mt-8 sm:text-xl md:text-2xl"
         >
-          Two hearts found their rhythm, and every tomorrow now begins with love. <br />
-          <span className="font-sans text-[0.65rem] uppercase tracking-[0.35em] text-foreground/60 sm:text-sm sm:tracking-[0.4em]">
-            17 - June - 2026
+          Two hearts found their rhythm, and a beautiful promise begins. <br />
+          <span className="mt-3 inline-block font-sans text-[1.25rem] font-medium uppercase tracking-[0.35em] text-gold sm:text-sm sm:tracking-[1.4em]">
+            17 . 06 . 2026
           </span>
         </motion.p>
 
@@ -137,7 +151,7 @@ const Hero = () => {
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 1.65 + index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="inline-flex max-w-[16rem] items-center gap-2 rounded-full border border-gold/30 bg-background/50 px-3.5 py-2 text-center font-display text-sm italic text-foreground/75 shadow-soft backdrop-blur-xl sm:max-w-none sm:px-4 sm:text-base"
+              className="inline-flex max-w-[16rem] items-center gap-2 rounded-full border border-gold/35 bg-foreground/45 px-3.5 py-2 text-center font-display text-sm font-medium italic text-ivory shadow-soft backdrop-blur-xl sm:max-w-none sm:px-4 sm:text-base"
             >
               <Heart className="h-3.5 w-3.5 shrink-0 text-primary" fill="currentColor" />
               {note}
@@ -154,7 +168,7 @@ const Hero = () => {
           {quickDetails.map(({ icon: Icon, label }) => (
             <span
               key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/55 px-3 py-2 text-[0.63rem] uppercase tracking-[0.18em] text-foreground/70 shadow-soft backdrop-blur-xl sm:px-4 sm:text-xs"
+              className="inline-flex items-center gap-2 rounded-full border border-gold/35 bg-foreground/45 px-3 py-2 text-[0.63rem] font-medium uppercase tracking-[0.18em] text-ivory shadow-soft backdrop-blur-xl sm:px-4 sm:text-xs"
             >
               <Icon className="h-3.5 w-3.5 text-primary" />
               {label}
@@ -168,7 +182,18 @@ const Hero = () => {
           transition={{ duration: 1.4, delay: 1.85, ease: [0.22, 1, 0.36, 1] }}
           className="mt-8 sm:mt-10"
         >
-          <Countdown target={WEDDING_DATE} />
+          {isBeforeEvent ? (
+            <Countdown target={EVENT_START} />
+          ) : (
+            <div className="rounded-full border border-gold/35 bg-foreground/45 px-5 py-3 text-center shadow-soft backdrop-blur-xl sm:px-7 sm:py-4">
+              <p className="font-display text-xl font-semibold text-ivory sm:text-2xl">
+                {isDuringEvent ? "The celebration is happening now" : "The celebration was blessed"}
+              </p>
+              <p className="mt-1 text-[0.62rem] uppercase tracking-[0.28em] text-gold sm:text-xs">
+                17.06.26 · 10.00 AM to 11.00 AM
+              </p>
+            </div>
+          )}
         </motion.div>
 
         <motion.div
@@ -181,14 +206,14 @@ const Hero = () => {
             href="#rsvp"
             className="group inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 font-display text-base text-foreground shadow-gold transition-transform duration-500 hover:scale-105 sm:px-8 sm:py-3.5 sm:text-lg"
           >
-            RSVP with Love
+            Bless the Couple
             <Heart className="h-4 w-4 transition-transform group-hover:scale-125" fill="currentColor" />
           </a>
           <a
             href="#story"
             className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/55 px-6 py-3 font-display text-base text-foreground/80 shadow-soft backdrop-blur-xl transition hover:border-primary hover:text-primary sm:px-8 sm:py-3.5 sm:text-lg"
           >
-            Watch the Story
+            View Moments
           </a>
         </motion.div>
       </motion.div>
