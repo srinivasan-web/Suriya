@@ -70,7 +70,10 @@ const MusicPlayer = () => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const widgetRef = useRef<SoundCloudWidget | null>(null);
   const rafRef = useRef<number | null>(null);
+  const autoplayRetryRef = useRef<number | null>(null);
   const currentTrackIndexRef = useRef(0);
+  const playbackStartedRef = useRef(false);
+  const userPausedRef = useRef(false);
 
   const [playing, setPlaying] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -97,8 +100,16 @@ const MusicPlayer = () => {
     setLevels(Array(BAR_COUNT).fill(0.2));
   };
 
+  const clearAutoplayRetry = () => {
+    if (autoplayRetryRef.current) {
+      window.clearTimeout(autoplayRetryRef.current);
+      autoplayRetryRef.current = null;
+    }
+  };
+
   const startPlayback = () => {
     const widget = widgetRef.current;
+    if (userPausedRef.current) return false;
     if (!widget) {
       setWaitingForGesture(true);
       return false;
@@ -106,8 +117,6 @@ const MusicPlayer = () => {
     try {
       widget.setVolume(42);
       widget.play();
-      setPlaying(true);
-      setWaitingForGesture(false);
       if (!rafRef.current) tick();
       return true;
     } catch {
@@ -148,6 +157,7 @@ const MusicPlayer = () => {
   };
 
   const playNext = () => {
+    userPausedRef.current = false;
     loadTrack(currentTrackIndexRef.current + 1, playing || waitingForGesture);
   };
 
@@ -156,6 +166,8 @@ const MusicPlayer = () => {
     if (!iframe) return;
 
     const events: (keyof WindowEventMap)[] = [
+      "click",
+      "mousedown",
       "pointerdown",
       "touchstart",
       "keydown",
@@ -164,12 +176,29 @@ const MusicPlayer = () => {
     ];
 
     const unlock = () => {
-      const started = startPlayback();
-      if (started) removeListeners();
+      userPausedRef.current = false;
+      startPlayback();
     };
 
     const removeListeners = () => {
       events.forEach((e) => window.removeEventListener(e, unlock));
+    };
+
+    const scheduleAutoplayRetry = (attempt = 1) => {
+      clearAutoplayRetry();
+      if (attempt > 5 || playbackStartedRef.current || userPausedRef.current) return;
+
+      autoplayRetryRef.current = window.setTimeout(() => {
+        startPlayback();
+        scheduleAutoplayRetry(attempt + 1);
+      }, attempt * 900);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && !playbackStartedRef.current) {
+        startPlayback();
+        scheduleAutoplayRetry();
+      }
     };
 
     const setupWidget = () => {
@@ -180,18 +209,26 @@ const MusicPlayer = () => {
       widget.bind(window.SC.Widget.Events.READY, () => {
         widget.setVolume(42);
         unlock();
+        scheduleAutoplayRetry();
       });
       widget.bind(window.SC.Widget.Events.PLAY, () => {
+        playbackStartedRef.current = true;
+        userPausedRef.current = false;
+        clearAutoplayRetry();
+        removeListeners();
         setPlaying(true);
         setWaitingForGesture(false);
         if (!rafRef.current) tick();
       });
       widget.bind(window.SC.Widget.Events.PAUSE, () => {
+        playbackStartedRef.current = false;
         setPlaying(false);
-        setWaitingForGesture(false);
+        setWaitingForGesture(!userPausedRef.current);
         stopBars();
       });
       widget.bind(window.SC.Widget.Events.FINISH, () => {
+        playbackStartedRef.current = false;
+        userPausedRef.current = false;
         loadTrack(currentTrackIndexRef.current + 1, true);
       });
     };
@@ -211,9 +248,12 @@ const MusicPlayer = () => {
     }
 
     events.forEach((e) => window.addEventListener(e, unlock, { passive: true }));
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       removeListeners();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearAutoplayRetry();
       script?.removeEventListener("load", setupWidget);
       widgetRef.current?.unbind(window.SC?.Widget.Events.READY ?? "ready");
       widgetRef.current?.unbind(window.SC?.Widget.Events.PLAY ?? "play");
@@ -233,11 +273,15 @@ const MusicPlayer = () => {
     }
     try {
       if (playing) {
+        userPausedRef.current = true;
+        playbackStartedRef.current = false;
+        clearAutoplayRetry();
         widget.pause();
         setPlaying(false);
         setWaitingForGesture(false);
         stopBars();
       } else {
+        userPausedRef.current = false;
         startPlayback();
       }
     } catch (err) {
@@ -262,9 +306,9 @@ const MusicPlayer = () => {
         transition={{ duration: 1, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
-        className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6"
+        className="fixed bottom-3 right-3 z-50 sm:bottom-6 sm:right-6"
       >
-        <div className="relative flex items-center gap-2 rounded-full glass-card px-2.5 py-2.5 shadow-bloom backdrop-blur-xl sm:gap-3 sm:px-3 sm:py-3">
+        <div className="relative flex items-center gap-1.5 rounded-full glass-card px-2 py-2 shadow-bloom backdrop-blur-xl sm:gap-3 sm:px-3 sm:py-3">
         <AnimatePresence>
           {playing && (
             <motion.div
@@ -280,7 +324,7 @@ const MusicPlayer = () => {
           type="button"
           onClick={toggle}
           aria-label={playing ? "Pause ambient music" : "Play ambient music"}
-          className="relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-gold text-background transition-transform duration-300 hover:scale-110 active:scale-95 sm:h-11 sm:w-11"
+          className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-gold text-background transition-transform duration-300 hover:scale-110 active:scale-95 sm:h-11 sm:w-11"
         >
           <AnimatePresence>
             {playing && (
@@ -295,11 +339,11 @@ const MusicPlayer = () => {
             )}
           </AnimatePresence>
           {playing ? (
-            <Pause className="relative h-4 w-4" fill="currentColor" />
+            <Pause className="relative h-3.5 w-3.5 sm:h-4 sm:w-4" fill="currentColor" />
           ) : waitingForGesture ? (
-            <Volume2 className="relative h-4 w-4" />
+            <Volume2 className="relative h-3.5 w-3.5 sm:h-4 sm:w-4" />
           ) : (
-            <Play className="relative ml-0.5 h-4 w-4" fill="currentColor" />
+            <Play className="relative ml-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4" fill="currentColor" />
           )}
         </button>
 
@@ -307,12 +351,12 @@ const MusicPlayer = () => {
           type="button"
           onClick={playNext}
           aria-label="Play next song"
-          className="relative flex h-9 w-9 items-center justify-center rounded-full border border-primary/30 text-foreground/80 transition hover:border-primary/60 hover:text-foreground active:scale-95 sm:h-11 sm:w-11"
+          className="relative flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 text-foreground/80 transition hover:border-primary/60 hover:text-foreground active:scale-95 sm:h-11 sm:w-11"
         >
-          <SkipForward className="h-4 w-4" fill="currentColor" />
+          <SkipForward className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="currentColor" />
         </button>
 
-        <div className="flex h-6 items-end gap-[2px] pr-1.5 sm:h-8 sm:gap-[3px] sm:pr-2">
+        <div className="flex h-5 items-end gap-[2px] pr-1 sm:h-8 sm:gap-[3px] sm:pr-2">
           {levels.map((lvl, i) => (
             <motion.span
               key={i}
