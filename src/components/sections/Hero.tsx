@@ -18,10 +18,7 @@ const floatingHearts = Array.from({ length: 22 }, (_, i) => ({
   drift: i % 2 === 0 ? 28 : -28,
 }));
 
-const quickDetails = [
-  { icon: CalendarHeart, label: "17.06.26" },
-  { icon: Sparkles, label: "Marriage" },
-];
+
 
 const loveNotes = [
   "A promise written in smiles",
@@ -159,22 +156,7 @@ const Hero = () => {
           ))}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-2 sm:gap-3"
-        >
-          {quickDetails.map(({ icon: Icon, label }) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-gold/35 bg-foreground/45 px-3 py-2 text-[0.63rem] font-medium uppercase tracking-[0.18em] text-ivory shadow-soft backdrop-blur-xl sm:px-4 sm:text-xs"
-            >
-              <Icon className="h-3.5 w-3.5 text-primary" />
-              {label}
-            </span>
-          ))}
-        </motion.div>
+       
 
         <motion.div
           initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
