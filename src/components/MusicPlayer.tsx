@@ -1,23 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, Music2, Volume2 } from "lucide-react";
+import { Play, Pause, Music2, Volume2, SkipForward } from "lucide-react";
 
-const TRACK_URL =
-  "https://soundcloud.com/arjungowtham/mudhalneemudivumnee?in=sandeepunnikuttan17/sets/love-and-romantic-tamil-songs&si=fbe12f97401241c9a0bdb7de54a98b7c&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing";
-const SOUNDCLOUD_PLAYER_URL = `https://w.soundcloud.com/player/?${new URLSearchParams({
-  url: TRACK_URL,
-  auto_play: "true",
-  buying: "false",
-  sharing: "false",
-  download: "false",
-  show_artwork: "false",
-  show_comments: "false",
-  show_playcount: "false",
-  show_user: "false",
-  hide_related: "true",
-  visual: "false",
-  color: "#b98b45",
-}).toString()}`;
+const PLAYLIST = [
+  {
+    title: "Mudhal Nee Mudivum Nee",
+    url: "https://soundcloud.com/arjungowtham/mudhalneemudivumnee?in=sandeepunnikuttan17/sets/love-and-romantic-tamil-songs&si=fbe12f97401241c9a0bdb7de54a98b7c&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
+  },
+  {
+    title: "En Jeevan",
+    url: "https://soundcloud.com/maheshprasad/en-jeevan-theri-vijay-samantha-atlee-gvprakash-kumar?in=tia-669334887/sets/tamil-love-songs&si=d5d7082f6a6f49668a78ad1efbab794e&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
+  },
+  {
+    title: "Manasellam Mazhaiye",
+    url: "https://soundcloud.com/karthik-7/manasellam-mazhaiye_saguni?in=tia-669334887/sets/tamil-love-songs&si=55e8de62f69f4bf18f1ee9822812795f&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
+  },
+  {
+    title: "Oh Oh",
+    url: "https://soundcloud.com/maheshprasad/thangamagan-oh-oh-anirudh-ravichander-dhanush?in=tia-669334887/sets/tamil-love-songs&si=82aea86969ff4ddeae02dc4a1f96c07a&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
+  },
+] as const;
+
+const getSoundCloudPlayerUrl = (trackUrl: string, autoPlay = true) =>
+  `https://w.soundcloud.com/player/?${new URLSearchParams({
+    url: trackUrl,
+    auto_play: String(autoPlay),
+    buying: "false",
+    sharing: "false",
+    download: "false",
+    show_artwork: "false",
+    show_comments: "false",
+    show_playcount: "false",
+    show_user: "false",
+    hide_related: "true",
+    visual: "false",
+    color: "#b98b45",
+  }).toString()}`;
+
 const SOUNDCLOUD_WIDGET_SCRIPT = "https://w.soundcloud.com/player/api.js";
 
 const BAR_COUNT = 5;
@@ -25,6 +44,7 @@ const BAR_COUNT = 5;
 type SoundCloudWidget = {
   bind: (event: string, handler: () => void) => void;
   unbind: (event: string) => void;
+  load: (url: string, options?: Record<string, string | boolean | number>) => void;
   play: () => void;
   pause: () => void;
   setVolume: (volume: number) => void;
@@ -50,11 +70,15 @@ const MusicPlayer = () => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const widgetRef = useRef<SoundCloudWidget | null>(null);
   const rafRef = useRef<number | null>(null);
+  const currentTrackIndexRef = useRef(0);
 
   const [playing, setPlaying] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [waitingForGesture, setWaitingForGesture] = useState(false);
   const [levels, setLevels] = useState<number[]>(() => Array(BAR_COUNT).fill(0.2));
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+
+  const currentTrack = PLAYLIST[currentTrackIndex];
 
   const tick = () => {
     const next = Array.from({ length: BAR_COUNT }, (_, i) => {
@@ -90,6 +114,41 @@ const MusicPlayer = () => {
       setWaitingForGesture(true);
       return false;
     }
+  };
+
+  const loadTrack = (trackIndex: number, autoPlay = playing) => {
+    const widget = widgetRef.current;
+    const nextIndex = (trackIndex + PLAYLIST.length) % PLAYLIST.length;
+    const nextTrack = PLAYLIST[nextIndex];
+
+    currentTrackIndexRef.current = nextIndex;
+    setCurrentTrackIndex(nextIndex);
+    setWaitingForGesture(false);
+
+    if (!widget) {
+      setWaitingForGesture(true);
+      return;
+    }
+
+    widget.load(nextTrack.url, {
+      auto_play: autoPlay,
+      buying: false,
+      sharing: false,
+      download: false,
+      show_artwork: false,
+      show_comments: false,
+      show_playcount: false,
+      show_user: false,
+      hide_related: true,
+      visual: false,
+      color: "#b98b45",
+    });
+
+    if (autoPlay && !rafRef.current) tick();
+  };
+
+  const playNext = () => {
+    loadTrack(currentTrackIndexRef.current + 1, playing || waitingForGesture);
   };
 
   useEffect(() => {
@@ -133,7 +192,7 @@ const MusicPlayer = () => {
         stopBars();
       });
       widget.bind(window.SC.Widget.Events.FINISH, () => {
-        startPlayback();
+        loadTrack(currentTrackIndexRef.current + 1, true);
       });
     };
 
@@ -191,8 +250,8 @@ const MusicPlayer = () => {
     <>
       <iframe
         ref={iframeRef}
-        title="Mudhal Nee Mudivum Nee"
-        src={SOUNDCLOUD_PLAYER_URL}
+        title={currentTrack.title}
+        src={getSoundCloudPlayerUrl(PLAYLIST[0].url)}
         allow="autoplay"
         aria-hidden="true"
         className="pointer-events-none absolute h-px w-px opacity-0"
@@ -244,6 +303,15 @@ const MusicPlayer = () => {
           )}
         </button>
 
+        <button
+          type="button"
+          onClick={playNext}
+          aria-label="Play next song"
+          className="relative flex h-9 w-9 items-center justify-center rounded-full border border-primary/30 text-foreground/80 transition hover:border-primary/60 hover:text-foreground active:scale-95 sm:h-11 sm:w-11"
+        >
+          <SkipForward className="h-4 w-4" fill="currentColor" />
+        </button>
+
         <div className="flex h-6 items-end gap-[2px] pr-1.5 sm:h-8 sm:gap-[3px] sm:pr-2">
           {levels.map((lvl, i) => (
             <motion.span
@@ -269,7 +337,11 @@ const MusicPlayer = () => {
               className="absolute right-full mr-3 flex items-center gap-2 whitespace-nowrap rounded-full glass-card px-4 py-2 text-xs uppercase tracking-[0.25em] text-foreground/80"
             >
               <Music2 className="h-3 w-3" />
-              {playing ? "Now playing" : waitingForGesture ? "Tap for music" : "Auto music"}
+              {playing
+                ? currentTrack.title
+                : waitingForGesture
+                  ? "Tap for music"
+                  : `${currentTrack.title} ready`}
             </motion.div>
           )}
         </AnimatePresence>
