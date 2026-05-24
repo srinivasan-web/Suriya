@@ -3,14 +3,52 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Music2, Volume2 } from "lucide-react";
 
 const TRACK_URL =
-  "https://cdn.pixabay.com/download/audio/2022/10/18/audio_31c2f1d4e0.mp3?filename=romantic-piano-115128.mp3";
+  "https://soundcloud.com/arjungowtham/mudhalneemudivumnee?in=sandeepunnikuttan17/sets/love-and-romantic-tamil-songs&si=fbe12f97401241c9a0bdb7de54a98b7c&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing";
+const SOUNDCLOUD_PLAYER_URL = `https://w.soundcloud.com/player/?${new URLSearchParams({
+  url: TRACK_URL,
+  auto_play: "true",
+  buying: "false",
+  sharing: "false",
+  download: "false",
+  show_artwork: "false",
+  show_comments: "false",
+  show_playcount: "false",
+  show_user: "false",
+  hide_related: "true",
+  visual: "false",
+  color: "#b98b45",
+}).toString()}`;
+const SOUNDCLOUD_WIDGET_SCRIPT = "https://w.soundcloud.com/player/api.js";
 
 const BAR_COUNT = 5;
 
+type SoundCloudWidget = {
+  bind: (event: string, handler: () => void) => void;
+  unbind: (event: string) => void;
+  play: () => void;
+  pause: () => void;
+  setVolume: (volume: number) => void;
+};
+
+declare global {
+  interface Window {
+    SC?: {
+      Widget: {
+        (iframe: HTMLIFrameElement): SoundCloudWidget;
+        Events: {
+          READY: string;
+          PLAY: string;
+          PAUSE: string;
+          FINISH: string;
+        };
+      };
+    };
+  }
+}
+
 const MusicPlayer = () => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const ctxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const widgetRef = useRef<SoundCloudWidget | null>(null);
   const rafRef = useRef<number | null>(null);
 
   const [playing, setPlaying] = useState(false);
@@ -18,50 +56,32 @@ const MusicPlayer = () => {
   const [waitingForGesture, setWaitingForGesture] = useState(false);
   const [levels, setLevels] = useState<number[]>(() => Array(BAR_COUNT).fill(0.2));
 
-  const ensureAudioGraph = async () => {
-    if (!audioRef.current) return;
-    if (!ctxRef.current) {
-      const Ctx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const ctx = new Ctx();
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 64;
-      analyser.smoothingTimeConstant = 0.82;
-      const source = ctx.createMediaElementSource(audioRef.current);
-      source.connect(analyser);
-      analyser.connect(ctx.destination);
-      ctxRef.current = ctx;
-      analyserRef.current = analyser;
-    }
-    if (ctxRef.current.state === "suspended") {
-      await ctxRef.current.resume();
-    }
-  };
-
   const tick = () => {
-    const analyser = analyserRef.current;
-    if (!analyser) return;
-    const data = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(data);
-
-    const step = Math.floor(data.length / BAR_COUNT);
     const next = Array.from({ length: BAR_COUNT }, (_, i) => {
-      const slice = data.slice(i * step, (i + 1) * step);
-      const avg = slice.reduce((a, b) => a + b, 0) / (slice.length || 1);
-      return Math.max(0.15, Math.min(1, avg / 180));
+      const pulse = Math.sin(Date.now() / 180 + i * 0.9);
+      return Math.max(0.2, Math.min(1, 0.55 + pulse * 0.35));
     });
     setLevels(next);
     rafRef.current = requestAnimationFrame(tick);
   };
 
-  const startPlayback = async () => {
-    const audio = audioRef.current;
-    if (!audio) return false;
+  const stopBars = () => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    setLevels(Array(BAR_COUNT).fill(0.2));
+  };
+
+  const startPlayback = () => {
+    const widget = widgetRef.current;
+    if (!widget) {
+      setWaitingForGesture(true);
+      return false;
+    }
     try {
-      await ensureAudioGraph();
-      audio.volume = 0.42;
-      await audio.play();
+      widget.setVolume(42);
+      widget.play();
       setPlaying(true);
       setWaitingForGesture(false);
       if (!rafRef.current) tick();
@@ -73,10 +93,9 @@ const MusicPlayer = () => {
   };
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.volume = 0.42;
-    audio.load();
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
     const events: (keyof WindowEventMap)[] = [
       "pointerdown",
       "touchstart",
@@ -85,8 +104,8 @@ const MusicPlayer = () => {
       "wheel",
     ];
 
-    const unlock = async () => {
-      const started = await startPlayback();
+    const unlock = () => {
+      const started = startPlayback();
       if (started) removeListeners();
     };
 
@@ -94,40 +113,73 @@ const MusicPlayer = () => {
       events.forEach((e) => window.removeEventListener(e, unlock));
     };
 
-    unlock();
-    audio.addEventListener("canplay", unlock);
-    audio.addEventListener("playing", () => {
-      setPlaying(true);
-      setWaitingForGesture(false);
-      if (!rafRef.current) tick();
-    });
+    const setupWidget = () => {
+      if (!window.SC || widgetRef.current) return;
+
+      const widget = window.SC.Widget(iframe);
+      widgetRef.current = widget;
+      widget.bind(window.SC.Widget.Events.READY, () => {
+        widget.setVolume(42);
+        unlock();
+      });
+      widget.bind(window.SC.Widget.Events.PLAY, () => {
+        setPlaying(true);
+        setWaitingForGesture(false);
+        if (!rafRef.current) tick();
+      });
+      widget.bind(window.SC.Widget.Events.PAUSE, () => {
+        setPlaying(false);
+        setWaitingForGesture(false);
+        stopBars();
+      });
+      widget.bind(window.SC.Widget.Events.FINISH, () => {
+        startPlayback();
+      });
+    };
+
+    let script = document.querySelector<HTMLScriptElement>(
+      `script[src="${SOUNDCLOUD_WIDGET_SCRIPT}"]`
+    );
+
+    if (script) {
+      setupWidget();
+    } else {
+      script = document.createElement("script");
+      script.src = SOUNDCLOUD_WIDGET_SCRIPT;
+      script.async = true;
+      script.addEventListener("load", setupWidget);
+      document.body.appendChild(script);
+    }
+
     events.forEach((e) => window.addEventListener(e, unlock, { passive: true }));
 
     return () => {
       removeListeners();
-      audio.removeEventListener("canplay", unlock);
-      audio.pause();
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      ctxRef.current?.close().catch(() => {});
+      script?.removeEventListener("load", setupWidget);
+      widgetRef.current?.unbind(window.SC?.Widget.Events.READY ?? "ready");
+      widgetRef.current?.unbind(window.SC?.Widget.Events.PLAY ?? "play");
+      widgetRef.current?.unbind(window.SC?.Widget.Events.PAUSE ?? "pause");
+      widgetRef.current?.unbind(window.SC?.Widget.Events.FINISH ?? "finish");
+      widgetRef.current?.pause();
+      stopBars();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const toggle = async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const toggle = () => {
+    const widget = widgetRef.current;
+    if (!widget) {
+      setWaitingForGesture(true);
+      return;
+    }
     try {
       if (playing) {
-        audio.pause();
+        widget.pause();
         setPlaying(false);
         setWaitingForGesture(false);
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
-        setLevels(Array(BAR_COUNT).fill(0.2));
+        stopBars();
       } else {
-        await startPlayback();
+        startPlayback();
       }
     } catch (err) {
       console.error("Music playback failed", err);
@@ -137,15 +189,13 @@ const MusicPlayer = () => {
 
   return (
     <>
-      <audio
-        ref={audioRef}
-        src={TRACK_URL}
-        autoPlay
-        loop
-        preload="auto"
-        crossOrigin="anonymous"
-        playsInline
+      <iframe
+        ref={iframeRef}
+        title="Mudhal Nee Mudivum Nee"
+        src={SOUNDCLOUD_PLAYER_URL}
+        allow="autoplay"
         aria-hidden="true"
+        className="pointer-events-none absolute h-px w-px opacity-0"
       />
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.9 }}
