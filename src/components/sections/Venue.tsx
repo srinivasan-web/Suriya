@@ -1,22 +1,46 @@
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Clock, Landmark, MapPin, Navigation, Route } from "lucide-react";
+import { motion } from "framer-motion";
+import { Clock, Landmark, MapPin, Navigation } from "lucide-react";
 import OrnamentalDivider from "../OrnamentalDivider";
+import venueExteriorClose from "@/assets/venue-exterior-close.jpg";
+import venueExteriorWide from "@/assets/venue-exterior-wide.jpg";
+import venueHallInterior from "@/assets/venue-hall-interior.jpg";
+
+const venueName = "Sri Kumaran Kalyana Mandabam";
+const mapUrl =
+  "https://maps.app.goo.gl/t6RyqhN4PXTajvJi9?g_st=aw";
 
 const venueDetails = [
   {
     icon: Landmark,
     label: "Marriage",
-    name: "Marriage",
-    address: "Arulmigu Pazhaniandavar Thirukovil",
+    name: venueName,
+    address: venueName,
     time: "Jun 17, 2026, 10:00 AM onwards",
   },
 ];
 
-const Venue = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+const venuePhotos = [
+  {
+    src: venueExteriorClose,
+    alt: "Entrance sign at Sri Kumaran Kalyana Mandabam",
+    caption: "Venue Entrance",
+    className: "aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5]",
+  },
+  {
+    src: venueExteriorWide,
+    alt: "Exterior view of Sri Kumaran Kalyana Mandabam",
+    caption: "Exterior View",
+    className: "aspect-[4/3]",
+  },
+  {
+    src: venueHallInterior,
+    alt: "Interior hall at Sri Kumaran Kalyana Mandabam",
+    caption: "Celebration Hall",
+    className: "aspect-[4/3]",
+  },
+];
 
+const Venue = () => {
   return (
     <section className="relative overflow-hidden bg-background py-20 sm:py-28 md:py-40">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,hsl(var(--gold)/0.18),transparent_36%),radial-gradient(ellipse_at_bottom_right,hsl(var(--primary)/0.16),transparent_42%)]" />
@@ -36,131 +60,37 @@ const Venue = () => {
 
         <div className="grid gap-8 sm:gap-12 lg:grid-cols-2 lg:items-center">
           <motion.div
-            ref={ref}
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-gold/30 bg-[linear-gradient(135deg,hsl(var(--ivory)),hsl(var(--gold)/0.18),hsl(var(--primary)/0.16))] shadow-bloom sm:aspect-square lg:aspect-[4/5]"
+            className="grid gap-4 sm:grid-cols-2 sm:gap-5"
           >
-            <div className="absolute inset-0 opacity-[0.16]">
-              <svg viewBox="0 0 560 700" className="h-full w-full">
-                <g stroke="hsl(var(--foreground))" strokeWidth="1">
-                  {Array.from({ length: 12 }).map((_, index) => (
-                    <line key={`h-${index}`} x1="0" y1={index * 64} x2="560" y2={index * 64} />
-                  ))}
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <line key={`v-${index}`} x1={index * 64} y1="0" x2={index * 64} y2="700" />
-                  ))}
-                </g>
-              </svg>
-            </div>
-
-            <div className="absolute inset-0">
-              <svg viewBox="0 0 560 700" className="h-full w-full">
-                <defs>
-                  <linearGradient id="venueRouteGradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" />
-                    <stop offset="48%" stopColor="hsl(var(--gold))" />
-                    <stop offset="100%" stopColor="hsl(var(--foreground))" />
-                  </linearGradient>
-                  <filter id="routeGlow">
-                    <feGaussianBlur stdDeviation="5" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                </defs>
-
-                <g opacity="0.24" fill="none" stroke="hsl(var(--foreground))" strokeLinecap="round">
-                  <path d="M 58 122 C 134 88, 182 122, 254 86 S 390 84, 500 128" strokeWidth="7" />
-                  <path d="M 68 612 C 154 544, 232 566, 318 510 S 442 404, 510 424" strokeWidth="10" />
-                  <path d="M 88 302 C 168 298, 204 246, 276 270 S 414 340, 500 286" strokeWidth="5" />
-                </g>
-
-                <motion.path
-                  d="M 92 584 C 116 492, 212 500, 232 404 C 252 308, 382 362, 402 236 C 414 158, 468 132, 502 96"
-                  fill="none"
-                  stroke="url(#venueRouteGradient)"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeDasharray="18 16"
-                  filter="url(#routeGlow)"
-                  initial={{ pathLength: 0 }}
-                  animate={inView ? { pathLength: 1 } : {}}
-                  transition={{ duration: 3.1, ease: "easeInOut" }}
-                />
-
-                {inView && (
-                  <circle r="9" fill="hsl(var(--foreground))">
-                    <animate
-                      attributeName="opacity"
-                      values="0;1;1"
-                      keyTimes="0;0.18;1"
-                      dur="3.1s"
-                      fill="freeze"
-                    />
-                    <animateMotion
-                      dur="3.1s"
-                      fill="freeze"
-                      path="M 92 584 C 116 492, 212 500, 232 404 C 252 308, 382 362, 402 236 C 414 158, 468 132, 502 96"
-                    />
-                  </circle>
-                )}
-              </svg>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.2, ease: "backOut" }}
-              className="absolute bottom-[13%] left-[13%]"
-            >
-              <div className="relative grid h-16 w-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-bloom">
-                <span className="absolute inset-0 rounded-full bg-primary/30 animate-glow-pulse" />
-                <Navigation className="relative h-6 w-6" />
-              </div>
-              <p className="mt-3 rounded-full bg-background/80 px-3 py-1 text-xs uppercase tracking-[0.18em] text-foreground shadow-soft backdrop-blur">
-                Start
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: -12, scale: 0.72 }}
-              animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ duration: 0.8, delay: 2.7, ease: "backOut" }}
-              className="absolute right-[8%] top-[7%]"
-            >
-              <div className="relative grid h-20 w-20 place-items-center rounded-full bg-gradient-gold text-foreground shadow-gold">
-                <span className="absolute inset-0 rounded-full bg-gold/35 animate-glow-pulse" />
-                <MapPin className="relative h-9 w-9" fill="currentColor" />
-              </div>
-              <p className="mt-3 rounded-full bg-background/85 px-3 py-1 text-xs uppercase tracking-[0.18em] text-foreground shadow-soft backdrop-blur">
-              Pazhaniandavar Thirukovil
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute bottom-5 left-5 right-5 rounded-2xl border border-gold/35 bg-background/82 p-4 shadow-soft backdrop-blur-md sm:p-5"
-            >
-              <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-gold text-foreground">
-                  <Route className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="font-display text-xl leading-tight text-foreground sm:text-2xl">
-                    Live Route Preview
-                  </p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.24em] text-foreground/60">
-                    Google map style tracking
-                  </p>
+            {venuePhotos.map((photo, index) => (
+              <motion.figure
+                key={photo.caption}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.9, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                className={`group relative overflow-hidden rounded-[1.5rem] border border-gold/30 bg-card shadow-bloom ${
+                  index === 0 ? "sm:row-span-2" : ""
+                }`}
+              >
+                <div className={photo.className}>
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                 </div>
-              </div>
-            </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/55 via-transparent to-transparent" />
+                <figcaption className="absolute bottom-4 left-4 right-4 rounded-full bg-background/82 px-4 py-2 text-center text-xs uppercase tracking-[0.22em] text-foreground shadow-soft backdrop-blur">
+                  {photo.caption}
+                </figcaption>
+              </motion.figure>
+            ))}
           </motion.div>
 
           <motion.div
@@ -172,7 +102,7 @@ const Venue = () => {
           >
             <h3 className="font-display text-3xl sm:text-4xl md:text-5xl">Forever Begins Here</h3>
             <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-              We would be honored by your presence as Suriya Kumar and Kaviya begin their forever with sacred rituals, family blessings, and love.
+              We would be honored by your presence as Suriya Kumar and Kaviya begin their forever at Sri Kumaran Kalyana Mandabam with sacred rituals, family blessings, and love.
             </p>
 
             <div className="space-y-4">
@@ -210,7 +140,7 @@ const Venue = () => {
             </div>
 
             <a
-              href="https://www.google.com/maps/search/?api=1&query=Arulmigu%20Pazhaniandavar%20Thirukovil"
+              href={mapUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-3 rounded-full bg-gradient-gold px-6 py-3.5 font-display text-base text-foreground shadow-gold transition-transform duration-500 hover:scale-105 sm:px-8 sm:py-4 sm:text-lg"
